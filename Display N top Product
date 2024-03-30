@@ -1,0 +1,89 @@
+import React, { useState, useEffect } from 'react';
+import { Container, Grid } from '@material-ui/core';
+import ProductCard from './ProductCard';
+
+const AllProductsPage = () => {
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch('http://20.244.56.144/test/companies/AMZ/categories/Laptop/product?top=10&minprice=1&maxprice=10000');
+      const data = await response.json();
+            setProducts(data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+
+    return (
+        <Container>
+            <Grid container spacing={3}>
+                {products.map((product) => (
+                    <Grid item xs={12} sm={6} md={4} key={product.id}>
+                        <ProductCard product={product} />
+                    </Grid>
+                ))}
+            </Grid>
+        </Container>
+    );
+};
+
+export default AllProductsPage;
+ 
+
+
+
+
+
+
+
+
+import React from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import AllProductsPage from './AllProductsPage';
+import ProductDetailsPage from './ProductDetailsPage';
+
+function App() {
+  return (
+    <Router>
+      <div className="App">
+        <Switch>
+          <Route exact path="/" component={AllProductsPage} />
+          <Route path="/product/:productId" component={ProductDetailsPage} />
+        </Switch>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
+
+
+
+
+
+
+import React from 'react';
+import { Card, CardContent, Typography } from '@material-ui/core';
+
+const ProductCard = ({ product }) => {
+  return (
+    <Card>
+      <CardContent>
+        <Typography variant="h5">{product.name}</Typography>
+        <Typography>{product.company}</Typography>
+        <Typography>{product.category}</Typography>
+        <Typography>Price: ${product.price}</Typography>
+        <Typography>Rating: {product.rating}</Typography>
+        <Typography>Discount: {product.discount}%</Typography>
+        <Typography>Availability: {product.availability}</Typography>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ProductCard;
